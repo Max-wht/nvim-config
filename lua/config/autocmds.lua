@@ -55,3 +55,13 @@ vim.api.nvim_create_autocmd("VimLeavePre", {
     set_im(insert_im)
   end,
 })
+
+local markdown_group = vim.api.nvim_create_augroup("markdown_options", { clear = true })
+
+vim.api.nvim_create_autocmd("FileType", {
+  group = markdown_group,
+  pattern = { "markdown", "markdown.mdx" },
+  callback = function()
+    vim.opt_local.spell = false
+  end,
+})
