@@ -77,7 +77,7 @@ local function toggle_terminal()
       vim.api.nvim_buf_delete(terminal.buf, { force = true })
     end
 
-    -- Keep the terminal out of Bufferline; it is a temporary panel, not a file tab.
+    -- Keep the terminal out of listed file buffers; it is a temporary panel.
     terminal.buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_win_set_buf(win, terminal.buf)
     terminal.job = vim.api.nvim_buf_call(terminal.buf, function()
@@ -102,6 +102,12 @@ vim.keymap.set("n", "<leader>ft", toggle_terminal, { desc = "Toggle Full Editor 
 vim.keymap.set("n", "<leader>fT", toggle_terminal, { desc = "Toggle Full Editor Terminal" })
 
 local map = vim.keymap.set
+
+-- Tabby workspaces: use h/l instead of brackets to switch tab pages.
+pcall(vim.keymap.del, "n", "<leader><tab>[")
+pcall(vim.keymap.del, "n", "<leader><tab>]")
+map("n", "<leader><tab>h", "<cmd>tabprevious<cr>", { desc = "Previous Tab" })
+map("n", "<leader><tab>l", "<cmd>tabnext<cr>", { desc = "Next Tab" })
 
 -- VS Code Vim: insert mode.
 map("i", "jk", "<Esc>", { desc = "Exit Insert Mode" })

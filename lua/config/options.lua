@@ -26,5 +26,5 @@ opt.shiftwidth = 8
 -- vim.timeout = 1000
 opt.timeoutlen = 1000
 
--- workbench.statusBar.visible = false;;;
-opt.laststatus = 0
+-- Use one global statusline so sidebar buffers do not render their own [No Name] bars.
+opt.laststatus = 3
