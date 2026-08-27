@@ -65,3 +65,30 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.spell = false
   end,
 })
+
+-- Avoid stacking the Tmux status bar above Tabby while Neovim is active.
+local function set_tmux_status(status)
+  if not vim.env.TMUX or vim.fn.executable("tmux") ~= 1 then
+    return
+  end
+
+  vim.fn.jobstart({ "tmux", "set-option", "-q", "status", status }, { detach = true })
+end
+
+local tmux_status_group = vim.api.nvim_create_augroup("tmux_status_for_neovim", { clear = true })
+
+vim.api.nvim_create_autocmd({ "VimLeavePre", "VimSuspend" }, {
+  group = tmux_status_group,
+  callback = function()
+    set_tmux_status("on")
+  end,
+})
+
+vim.api.nvim_create_autocmd("VimResume", {
+  group = tmux_status_group,
+  callback = function()
+    set_tmux_status("off")
+  end,
+})
+
+set_tmux_status("off")

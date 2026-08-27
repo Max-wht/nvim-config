@@ -27,6 +27,14 @@ return {
         width = 30,
       },
       show_guides = true,
+      -- Match the spacing used by the file Explorer so both sidebars have a
+      -- consistent, VS Code-like visual density.
+      guides = {
+        mid_item = "├─ ",
+        last_item = "└─ ",
+        nested_top = "│  ",
+        whitespace = "   ",
+      },
     },
   },
 }

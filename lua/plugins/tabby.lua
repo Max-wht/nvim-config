@@ -27,15 +27,15 @@ return {
       vim.o.showtabline = 2
       vim.opt.sessionoptions:append({ "globals", "tabpages" })
 
-      local palette = require("Eva-Theme.palette").dark_base
+      local palette = require("catppuccin.palettes").get_palette("mocha")
       local theme = {
-        fill = { fg = palette.comment, bg = palette.background },
-        head = { fg = palette.background, bg = palette.func, style = "bold" },
-        current_tab = { fg = palette.background, bg = palette.parameter, style = "bold" },
-        tab = { fg = palette.variable, bg = palette.panelBackground },
-        current_win = { fg = palette.func, bg = palette.background, style = "bold" },
-        win = { fg = palette.comment, bg = palette.background },
-        tail = { fg = palette.background, bg = palette.type, style = "bold" },
+        fill = { fg = palette.overlay0, bg = palette.base },
+        head = { fg = palette.base, bg = palette.mauve, style = "bold" },
+        current_tab = { fg = palette.base, bg = palette.peach, style = "bold" },
+        tab = { fg = palette.lavender, bg = palette.surface0 },
+        current_win = { fg = palette.blue, bg = palette.base, style = "bold" },
+        win = { fg = palette.overlay0, bg = palette.base },
+        tail = { fg = palette.base, bg = palette.teal, style = "bold" },
       }
 
       local function tab_name(tabid)
