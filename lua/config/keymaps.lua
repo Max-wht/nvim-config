@@ -107,6 +107,8 @@ local map = vim.keymap.set
 map("i", "jk", "<Esc>", { desc = "Exit Insert Mode" })
 
 -- VS Code Vim: normal mode.
+map("n", "n", "b", { desc = "Previous Word Start" })
+map("n", "b", "n", { desc = "Next Search Result" })
 map("n", "<leader>-", "<C-o>", { desc = "Navigate Back" })
 map("n", "[", "{", { desc = "Previous Paragraph" })
 map("n", "]", "}", { desc = "Next Paragraph" })

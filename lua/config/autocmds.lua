@@ -7,7 +7,7 @@
 -- Or remove existing autocmds by their group name (which is prefixed with `lazyvim_` for the defaults)
 -- e.g. vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
 
-local im_select = "/opt/homebrew/bin/im-select"
+local im_select = vim.fn.exepath("im-select")
 local default_im = "com.apple.keylayout.ABC"
 local insert_im = default_im
 
@@ -19,7 +19,7 @@ local function get_im()
 end
 
 local function set_im(im)
-  if im and im ~= "" then
+  if im_select ~= "" and im and im ~= "" then
     vim.fn.jobstart({ im_select, im }, { detach = true })
   end
 end
