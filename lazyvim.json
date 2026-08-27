@@ -1,5 +1,10 @@
 {
   "extras": [
+  "lazyvim.plugins.extras.formatting.prettier",
+  "lazyvim.plugins.extras.lang.json",
+  "lazyvim.plugins.extras.lang.solidity",
+  "lazyvim.plugins.extras.lang.typescript",
+  "lazyvim.plugins.extras.ui.smear-cursor"
 
   ],
   "install_version": 8,
