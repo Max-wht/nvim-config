@@ -25,6 +25,7 @@ return {
     },
     config = function()
       vim.o.showtabline = 2
+      vim.o.winbar = ""
       vim.opt.sessionoptions:append({ "globals", "tabpages" })
 
       local palette = require("catppuccin.palettes").get_palette("mocha")
@@ -33,8 +34,6 @@ return {
         head = { fg = palette.base, bg = palette.mauve, style = "bold" },
         current_tab = { fg = palette.base, bg = palette.peach, style = "bold" },
         tab = { fg = palette.lavender, bg = palette.surface0 },
-        current_win = { fg = palette.blue, bg = palette.base, style = "bold" },
-        win = { fg = palette.overlay0, bg = palette.base },
         tail = { fg = palette.base, bg = palette.teal, style = "bold" },
       }
 
@@ -52,47 +51,68 @@ return {
         return vim.fn.fnamemodify(name, ":t")
       end
 
+      local function add_tab_buffer(tabid, bufnr)
+        if vim.bo[bufnr].buftype ~= "" then
+          return
+        end
+
+        local ok, buffers = pcall(vim.api.nvim_tabpage_get_var, tabid, "tabby_buffers")
+        buffers = ok and buffers or {}
+        if not vim.tbl_contains(buffers, bufnr) then
+          table.insert(buffers, bufnr)
+          vim.api.nvim_tabpage_set_var(tabid, "tabby_buffers", buffers)
+        end
+      end
+
+      for _, tabid in ipairs(vim.api.nvim_list_tabpages()) do
+        for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(tabid)) do
+          add_tab_buffer(tabid, vim.api.nvim_win_get_buf(winid))
+        end
+      end
+
+      vim.api.nvim_create_autocmd("BufEnter", {
+        group = vim.api.nvim_create_augroup("TabbyTabBuffers", { clear = true }),
+        callback = function(args)
+          add_tab_buffer(vim.api.nvim_get_current_tabpage(), args.buf)
+          vim.cmd.redrawtabline()
+        end,
+      })
+
       require("tabby").setup({
         line = function(line)
           local cwd = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+          local current_tab_bufs = {}
+          local ok, buffers = pcall(
+            vim.api.nvim_tabpage_get_var,
+            vim.api.nvim_get_current_tabpage(),
+            "tabby_buffers"
+          )
+          for _, bufnr in ipairs(ok and buffers or {}) do
+            current_tab_bufs[bufnr] = true
+          end
 
           return {
             {
               { "  ", hl = theme.head },
               line.sep("", theme.head, theme.fill),
             },
-            line.tabs().foreach(function(tab)
-              local hl = tab.is_current() and theme.current_tab or theme.tab
-              return {
-                line.sep("", hl, theme.fill),
-                tab.in_jump_mode() and tab.jump_key() or tab.number(),
-                " ",
-                tab.name(),
-                tab.close_btn(" 󰅖"),
-                line.sep("", hl, theme.fill),
-                hl = hl,
-                margin = " ",
-              }
-            end),
-            line.spacer(),
-            line
-              .wins_in_tab(line.api.get_current_tab())
-              .filter(function(win)
-                return win.buf():type() == ""
+            line.bufs()
+              .filter(function(buf)
+                return current_tab_bufs[buf.id] and buf:type() == ""
               end)
-              .foreach(function(win)
-                local hl = win.is_current() and theme.current_win or theme.win
+              .foreach(function(buf)
+                local hl = buf.is_current() and theme.current_tab or theme.tab
                 return {
                   line.sep("", hl, theme.fill),
-                  win.file_icon(),
-                  " ",
-                  win.buf_name(),
-                  win.buf().is_changed() and " ●" or "",
+                  buf.file_icon(),
+                  buf.name(),
+                  buf.is_changed() and " ●" or "",
                   line.sep("", hl, theme.fill),
                   hl = hl,
                   margin = " ",
                 }
               end),
+            line.spacer(),
             {
               line.sep("", theme.tail, theme.fill),
               { " 󰉋 " .. cwd .. " ", hl = theme.tail },

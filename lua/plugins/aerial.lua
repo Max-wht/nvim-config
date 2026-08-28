@@ -25,6 +25,9 @@ return {
         default_direction = "left",
         placement = "edge",
         width = 30,
+        win_opts = {
+          statuscolumn = "",
+        },
       },
       show_guides = true,
       -- Match the spacing used by the file Explorer so both sidebars have a

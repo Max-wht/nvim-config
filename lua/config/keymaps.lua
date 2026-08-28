@@ -101,6 +101,25 @@ vim.keymap.set({ "n", "t" }, "<D-j>", toggle_terminal, { desc = "Toggle Full Edi
 vim.keymap.set("n", "<leader>ft", toggle_terminal, { desc = "Toggle Full Editor Terminal" })
 vim.keymap.set("n", "<leader>fT", toggle_terminal, { desc = "Toggle Full Editor Terminal" })
 
+local function new_terminal()
+  local used_ids = {}
+  for _, term in ipairs(Snacks.terminal.list()) do
+    local metadata = vim.b[term.buf].snacks_terminal
+    if metadata and metadata.id then
+      used_ids[metadata.id] = true
+    end
+  end
+
+  local id = 1
+  while used_ids[id] do
+    id = id + 1
+  end
+
+  Snacks.terminal(nil, { count = id, cwd = LazyVim.root() })
+end
+
+vim.keymap.set({ "n", "t" }, "<D-k>", new_terminal, { desc = "New Terminal" })
+
 local map = vim.keymap.set
 
 -- Tabby workspaces: use h/l instead of brackets to switch tab pages.
@@ -113,6 +132,8 @@ map("n", "<leader><tab>l", "<cmd>tabnext<cr>", { desc = "Next Tab" })
 map("i", "jk", "<Esc>", { desc = "Exit Insert Mode" })
 
 -- VS Code Vim: normal mode.
+map("n", "<D-;>", ":", { desc = "Enter Command-line Mode" })
+map("n", "/", "/<C-r><C-w>", { desc = "Search Current Word" })
 map("n", "n", "b", { desc = "Previous Word Start" })
 map("n", "b", "n", { desc = "Next Search Result" })
 map("n", "<leader>-", "<C-o>", { desc = "Navigate Back" })

@@ -22,6 +22,7 @@ return {
             },
             layout = {
               preset = "sidebar",
+              hidden = { "input" },
               layout = {
                 position = "right",
               },
