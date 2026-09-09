@@ -5,11 +5,11 @@ return {
     opts = {
       highlighters = {
         note = {
-          pattern = "//@note%f[%W]",
+          pattern = "//@note%f[%W].*",
           group = "DiagnosticInfo",
         },
         follow = {
-          pattern = "//@follow%f[%W]",
+          pattern = "//@follow%f[%W].*",
           group = "DiagnosticWarn",
         },
       },

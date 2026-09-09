@@ -4,6 +4,9 @@
 
 local opt = vim.opt
 
+-- Save without formatting; use <leader>p to format manually.
+vim.g.autoformat = false
+
 -- editor.lineNumbers = off
 opt.number = true
 opt.relativenumber = true

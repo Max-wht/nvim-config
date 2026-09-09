@@ -122,6 +122,12 @@ vim.keymap.set({ "n", "t" }, "<D-k>", new_terminal, { desc = "New Terminal" })
 
 local map = vim.keymap.set
 
+-- Prevent accidental unnamed buffers from new-file / new-tab shortcuts.
+-- Use <Nop> so disabled sequences cannot fall through to normal-mode commands.
+for _, key in ipairs({ "<leader>fn", "<leader><tab><tab>", "<C-w>n", "<C-w><C-n>" }) do
+  map("n", key, "<Nop>", { desc = "Disabled: New Empty Buffer" })
+end
+
 -- Tabby workspaces: use h/l instead of brackets to switch tab pages.
 pcall(vim.keymap.del, "n", "<leader><tab>[")
 pcall(vim.keymap.del, "n", "<leader><tab>]")
@@ -145,7 +151,6 @@ map("n", "<S-Tab>", "<<", { desc = "Outdent Line" })
 -- VS Code Vim: editor pages / buffers.
 map("n", "<leader>tp", "<cmd>bprevious<cr>", { desc = "Previous Editor" })
 map("n", "<leader>tn", "<cmd>bnext<cr>", { desc = "Next Editor" })
-map("n", "<leader>to", "<cmd>enew<cr>", { desc = "New Editor" })
 map("n", "<leader>xx", function()
   Snacks.bufdelete()
 end, { desc = "Close Current Editor" })

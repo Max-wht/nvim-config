@@ -68,6 +68,9 @@ return {
           return
         end
 
+        -- Keep the editing buffer selected when a sidebar takes focus.
+        vim.api.nvim_tabpage_set_var(tabid, "tabby_current_buffer", bufnr)
+
         local ok, buffers = pcall(vim.api.nvim_tabpage_get_var, tabid, "tabby_buffers")
         buffers = ok and buffers or {}
         if not vim.tbl_contains(buffers, bufnr) then
@@ -80,6 +83,7 @@ return {
         for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(tabid)) do
           add_tab_buffer(tabid, vim.api.nvim_win_get_buf(winid))
         end
+        add_tab_buffer(tabid, vim.api.nvim_win_get_buf(vim.api.nvim_tabpage_get_win(tabid)))
       end
 
       vim.api.nvim_create_autocmd("BufEnter", {
@@ -95,11 +99,7 @@ return {
           local theme = current_theme()
           local cwd = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
           local current_tab_bufs = {}
-          local ok, buffers = pcall(
-            vim.api.nvim_tabpage_get_var,
-            vim.api.nvim_get_current_tabpage(),
-            "tabby_buffers"
-          )
+          local ok, buffers = pcall(vim.api.nvim_tabpage_get_var, vim.api.nvim_get_current_tabpage(), "tabby_buffers")
           for _, bufnr in ipairs(ok and buffers or {}) do
             current_tab_bufs[bufnr] = true
           end
@@ -109,12 +109,14 @@ return {
               { "  ", hl = theme.head },
               line.sep("", theme.head, theme.fill),
             },
-            line.bufs()
+            line
+              .bufs()
               .filter(function(buf)
                 return current_tab_bufs[buf.id] and buf:type() == ""
               end)
               .foreach(function(buf)
-                local hl = buf.is_current() and theme.current_tab or theme.tab
+                local selected = buf.id == vim.t.tabby_current_buffer
+                local hl = selected and theme.current_tab or theme.tab
                 return {
                   line.sep("", hl, theme.fill),
                   buf.file_icon(),
