@@ -28,14 +28,26 @@ return {
       vim.o.winbar = ""
       vim.opt.sessionoptions:append({ "globals", "tabpages" })
 
-      local palette = require("catppuccin.palettes").get_palette("mocha")
-      local theme = {
-        fill = { fg = palette.overlay0, bg = palette.base },
-        head = { fg = palette.base, bg = palette.mauve, style = "bold" },
-        current_tab = { fg = palette.base, bg = palette.peach, style = "bold" },
-        tab = { fg = palette.lavender, bg = palette.surface0 },
-        tail = { fg = palette.base, bg = palette.teal, style = "bold" },
-      }
+      -- Resolve theme groups each redraw, so ColorScheme changes do not leave stale colors.
+      local function current_theme()
+        local function hl(name)
+          return vim.api.nvim_get_hl(0, { name = name, link = false })
+        end
+        return {
+          fill = hl("TabLineFill"),
+          head = hl("TabLine"),
+          current_tab = hl("TabLineSel"),
+          tab = hl("TabLine"),
+          tail = hl("TabLine"),
+        }
+      end
+
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        group = vim.api.nvim_create_augroup("TabbyThemeRefresh", { clear = true }),
+        callback = function()
+          vim.schedule(vim.cmd.redrawtabline)
+        end,
+      })
 
       local function tab_name(tabid)
         local ok, win = pcall(vim.api.nvim_tabpage_get_win, tabid)
@@ -80,6 +92,7 @@ return {
 
       require("tabby").setup({
         line = function(line)
+          local theme = current_theme()
           local cwd = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
           local current_tab_bufs = {}
           local ok, buffers = pcall(
