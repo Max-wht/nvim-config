@@ -29,5 +29,5 @@ opt.shiftwidth = 8
 -- vim.timeout = 1000
 opt.timeoutlen = 1000
 
--- Use one global statusline so sidebar buffers do not render their own [No Name] bars.
-opt.laststatus = 3
+-- Hide the bottom statusline in all windows.
+opt.laststatus = 0
