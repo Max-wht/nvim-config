@@ -19,4 +19,8 @@ return {
       end,
     },
   },
+  {
+    "LazyVim/LazyVim",
+    opts = { colorscheme = "Eva-Dark" },
+  },
 }

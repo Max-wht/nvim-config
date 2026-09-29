@@ -9,8 +9,4 @@ return {
       },
     },
   },
-  {
-    "LazyVim/LazyVim",
-    opts = { colorscheme = "vscode-light-2026" },
-  },
 }

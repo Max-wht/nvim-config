@@ -122,6 +122,29 @@ vim.keymap.set({ "n", "t" }, "<D-k>", new_terminal, { desc = "New Terminal" })
 
 local map = vim.keymap.set
 
+-- Neovide forwards GUI shortcuts to Neovim, so provide familiar clipboard
+-- behavior for both macOS Command and Ctrl variants.
+if vim.g.neovide then
+  local function copy()
+    vim.cmd([[normal! "+y]])
+  end
+
+  local function paste()
+    vim.api.nvim_paste(vim.fn.getreg("+"), true, -1)
+  end
+
+  for _, key in ipairs({ "<D-c>", "<C-c>" }) do
+    map("v", key, copy, { silent = true, desc = "Copy to System Clipboard" })
+  end
+
+  for _, key in ipairs({ "<D-v>", "<C-v>" }) do
+    map({ "n", "i", "v", "c", "t" }, key, paste, { silent = true, desc = "Paste from System Clipboard" })
+  end
+
+  -- Ctrl-V normally enters blockwise Visual mode; keep that operation on Ctrl-Q.
+  map({ "n", "v" }, "<C-q>", "<C-v>", { desc = "Visual Block Mode" })
+end
+
 -- Prevent accidental unnamed buffers from new-file / new-tab shortcuts.
 -- Use <Nop> so disabled sequences cannot fall through to normal-mode commands.
 for _, key in ipairs({ "<leader>fn", "<leader><tab><tab>", "<C-w>n", "<C-w><C-n>" }) do
@@ -167,13 +190,17 @@ map("n", "<leader>l", "<C-w>l", { desc = "Focus Right Editor", remap = true })
 
 -- VS Code Vim: explorer, files, save and format.
 map("n", "<leader>e", function()
-  Snacks.explorer({ cwd = LazyVim.root() })
+  require("neo-tree.command").execute({ toggle = true, dir = LazyVim.root() })
 end, { desc = "Explorer" })
 map("n", "<leader>w", "<cmd>write<cr>", { desc = "Save File" })
 map("n", "<leader>f", function()
   Snacks.picker.files({ cwd = LazyVim.root() })
 end, { desc = "Quick Open" })
 map("n", "<leader>p", function()
+  if vim.bo.filetype == "markdown" or vim.bo.filetype == "markdown.mdx" then
+    return
+  end
+
   LazyVim.format({ force = true })
 end, { desc = "Format Document" })
 

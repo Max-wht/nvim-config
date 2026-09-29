@@ -1,7 +1,15 @@
 return {
   "sphamba/smear-cursor.nvim",
+  enabled = not vim.g.neovide,
   opts = {
-    -- Use the plugin's Default motion, with no fire particles.
+    -- Make ordinary j/k movement visibly glide between adjacent rows.
+    smear_between_neighbor_lines = true,
+    stiffness = 0.45,
+    trailing_stiffness = 0.35,
+    damping = 0.9,
+    time_interval = 8,
+
+    -- Use the plugin's default motion, with no fire particles.
     particles_enabled = false,
     -- Override LazyVim's block-drawing workaround for Ghostty.
     hide_target_hack = false,
