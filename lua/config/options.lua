@@ -20,11 +20,11 @@ opt.wrap = true
 opt.linebreak = true
 opt.breakindent = true
 
--- detectIndentation=false + tabWidth=8 + useTabs=false
+-- detectIndentation=false + tabWidth=4 + useTabs=false
 opt.expandtab = true
-opt.tabstop = 8
-opt.softtabstop = 8
-opt.shiftwidth = 8
+opt.tabstop = 4
+opt.softtabstop = 4
+opt.shiftwidth = 4
 
 -- vim.timeout = 1000
 opt.timeoutlen = 1000
@@ -40,8 +40,9 @@ if vim.g.neovide then
   -- Ghostty: JetBrains Mono 15 with Noto Sans CJK SC fallback.
   vim.o.guifont = "JetBrainsMono Nerd Font Mono,Noto Sans CJK SC:h15"
 
-  -- Ghostty's adjust-cell-height is 40%; 40% of the 15pt font is 6px.
-  opt.linespace = 6
+  -- Keep the fullscreen grid flush with the bottom edge. Extra line spacing
+  -- makes Neovide round the grid down and leaves an almost row-sized gap.
+  opt.linespace = 0
 
   vim.g.neovide_padding_top = 0
   vim.g.neovide_padding_bottom = 0

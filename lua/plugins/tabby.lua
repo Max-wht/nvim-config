@@ -28,17 +28,15 @@ return {
       vim.o.winbar = ""
       vim.opt.sessionoptions:append({ "globals", "tabpages" })
 
-      -- Resolve theme groups each redraw, so ColorScheme changes do not leave stale colors.
+      -- Use Eva-Dark's semantic colors instead of its muted generic TabLine groups.
       local function current_theme()
-        local function hl(name)
-          return vim.api.nvim_get_hl(0, { name = name, link = false })
-        end
+        local palette = require("Eva-Theme.palette").dark_base
         return {
-          fill = hl("TabLineFill"),
-          head = hl("TabLine"),
-          current_tab = hl("TabLineSel"),
-          tab = hl("TabLine"),
-          tail = hl("TabLine"),
+          fill = { fg = palette.comment, bg = palette.background },
+          head = { fg = palette.background, bg = palette.func, style = "bold" },
+          current_tab = { fg = palette.background, bg = palette.parameter, style = "bold" },
+          tab = { fg = palette.variable, bg = palette.panelBackground },
+          tail = { fg = palette.background, bg = palette.type, style = "bold" },
         }
       end
 

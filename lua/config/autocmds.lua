@@ -58,12 +58,28 @@ vim.api.nvim_create_autocmd("VimLeavePre", {
 
 local markdown_group = vim.api.nvim_create_augroup("markdown_options", { clear = true })
 
+local function set_markdown_options()
+  local filetype = vim.bo.filetype
+  if filetype ~= "markdown" and filetype ~= "markdown.mdx" then
+    return
+  end
+
+  vim.opt_local.spell = false
+  -- These are window-local, so reapply them whenever Markdown enters a window.
+  vim.opt_local.wrap = true
+  vim.opt_local.linebreak = true
+  vim.opt_local.breakindent = true
+end
+
 vim.api.nvim_create_autocmd("FileType", {
   group = markdown_group,
   pattern = { "markdown", "markdown.mdx" },
-  callback = function()
-    vim.opt_local.spell = false
-  end,
+  callback = set_markdown_options,
+})
+
+vim.api.nvim_create_autocmd({ "BufWinEnter", "WinEnter" }, {
+  group = markdown_group,
+  callback = set_markdown_options,
 })
 
 -- Avoid stacking the Tmux status bar above Tabby while Neovim is active.
